@@ -62,6 +62,35 @@ Fantasy/
 └── README.md
 ```
 
+## Upload 2 — Database
+
+SQLAlchemy models and Alembic migrations live under `apps/api`. Requires Postgres running (step 2 above).
+
+```bash
+cd apps/api
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# From repo root, copy env if needed: cp .env.example .env
+alembic upgrade head
+```
+
+Verify tables:
+
+```bash
+docker exec -it fantasy-postgres psql -U fantasy -d fantasy -c "\dt"
+```
+
+Expected tables: `sports`, `users`, `teams`, `players`, `player_season_stats`, `player_game_logs`, `user_watchlists`. Seed rows: `nfl`, `nba` in `sports`.
+
 ## Roadmap
 
-Incremental uploads to GitHub — see project plan. Upload 1 is scaffold only; database, ETL, auth, and UI follow in later uploads.
+| Upload | Status |
+|--------|--------|
+| 1 — Scaffold | Done |
+| 2 — Database | Done (local) |
+| 3 — ETL + player search API | Next |
+| 4 — Auth + watchlist API | |
+| 5 — Web UI | |
+| 6 — Analytics | |
+| 7 — Deploy + CI | |
