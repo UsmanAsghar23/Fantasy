@@ -83,13 +83,34 @@ docker exec -it fantasy-postgres psql -U fantasy -d fantasy -c "\dt"
 
 Expected tables: `sports`, `users`, `teams`, `players`, `player_season_stats`, `player_game_logs`, `user_watchlists`. Seed rows: `nfl`, `nba` in `sports`.
 
+## Upload 3 — ETL and player API
+
+Sync data (requires Upload 2 migrations and Postgres running). NFL uses [nflverse](https://github.com/nflverse/nflverse-data) via `nflreadpy`; NBA uses [balldontlie](https://www.balldontlie.io/) (rate-limited — first sync can take several minutes).
+
+```bash
+cd apps/api
+source .venv/bin/activate
+pip install -r requirements.txt
+alembic upgrade head
+
+# One sport at a time (recommended)
+python -m scripts.sync_stats --sport nfl --season 2024
+python -m scripts.sync_stats --sport nba --season 2024
+```
+
+Start the API and try:
+
+- [http://localhost:8000/docs](http://localhost:8000/docs)
+- `GET /players?sport=nfl&q=mahomes`
+- `GET /players/{player_id}`
+
 ## Roadmap
 
 | Upload | Status |
 |--------|--------|
 | 1 — Scaffold | Done |
 | 2 — Database | Done (local) |
-| 3 — ETL + player search API | Next |
+| 3 — ETL + player search API | Done (local) |
 | 4 — Auth + watchlist API | |
 | 5 — Web UI | |
 | 6 — Analytics | |

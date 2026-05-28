@@ -1,0 +1,7 @@
+SPORT_NFL_ID = 1
+SPORT_NBA_ID = 2
+
+SPORT_CODES = {
+    "nfl": SPORT_NFL_ID,
+    "nba": SPORT_NBA_ID,
+}
