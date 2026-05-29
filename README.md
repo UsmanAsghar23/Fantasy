@@ -104,6 +104,42 @@ Start the API and try:
 - `GET /players?sport=nfl&q=mahomes`
 - `GET /players/{player_id}`
 
+## Upload 4 — Auth and watchlist API
+
+Configure Google OAuth (Web client) in [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Authorized JavaScript origins: `http://localhost:3000`. Copy client ID/secret into `.env`:
+
+```bash
+JWT_SECRET=your-long-random-secret
+GOOGLE_CLIENT_ID=....apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=...
+```
+
+**Flow:** The Next.js app (Upload 5) obtains a Google **ID token** and sends it to the API. The API verifies it, upserts the user, and returns a JWT.
+
+| Endpoint | Auth | Description |
+|----------|------|-------------|
+| `POST /auth/sync` | No | Body: `{ "id_token": "..." }` → JWT + user |
+| `GET /auth/me` | Bearer | Current user |
+| `GET /watchlist` | Bearer | Saved players |
+| `POST /watchlist/{player_id}` | Bearer | Add player |
+| `DELETE /watchlist/{player_id}` | Bearer | Remove player |
+
+**Test with curl** (replace tokens):
+
+```bash
+# After obtaining a Google ID token from your OAuth client:
+curl -X POST http://localhost:8000/auth/sync \
+  -H "Content-Type: application/json" \
+  -d '{"id_token": "GOOGLE_ID_TOKEN"}'
+
+export TOKEN="your-jwt"
+curl http://localhost:8000/auth/me -H "Authorization: Bearer $TOKEN"
+curl http://localhost:8000/watchlist -H "Authorization: Bearer $TOKEN"
+curl -X POST "http://localhost:8000/watchlist/PLAYER_UUID" -H "Authorization: Bearer $TOKEN"
+```
+
+Use **Authorize** in [Swagger UI](http://localhost:8000/docs) with `Bearer <jwt>` for watchlist routes.
+
 ## Roadmap
 
 | Upload | Status |
@@ -111,7 +147,7 @@ Start the API and try:
 | 1 — Scaffold | Done |
 | 2 — Database | Done (local) |
 | 3 — ETL + player search API | Done (local) |
-| 4 — Auth + watchlist API | |
+| 4 — Auth + watchlist API | Done (local) |
 | 5 — Web UI | |
 | 6 — Analytics | |
 | 7 — Deploy + CI | |

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import players
+from app.routers import auth, players, watchlist
 
 app = FastAPI(
     title="Fantasy Analytics API",
@@ -18,7 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(players.router)
+app.include_router(watchlist.router)
 
 
 @app.get("/health")
